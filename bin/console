@@ -1,0 +1,52 @@
+#!/usr/bin/env php
+<?php
+
+# This is a command line script for Helix Swarm 2019.3
+# it requires the RenameUser extension.
+# Do Not Move this file, it must be run from this location
+# see install and usage documentation in ../module/RenameUser/README.md
+
+use Application\Model\ServicesModelTrait;
+use Symfony\Component\Console\Application as ConsoleApplication;
+use Zend\Mvc\Application;
+use Zend\Stdlib\ArrayUtils;
+
+if (!defined('BASE_PATH')) {
+    define('BASE_PATH', realpath(__DIR__ . '/../'));
+    define('BASE_DATA_PATH', realpath( __DIR__ . '/../data/'));
+}
+
+require_once BASE_PATH . '/module/Application/SwarmFunctions.php';
+\Application\SwarmFunctions::configureEnvironment( BASE_DATA_PATH );
+
+// Composer autoloading
+if (is_file($autoload = BASE_PATH . '/vendor/autoload.php')) {
+    require($autoload);
+} else {
+    fwrite(STDERR,
+        'You must set up the project dependencies, run composer install first' . PHP_EOL
+    );
+    exit(1);
+}
+
+$configuration = include BASE_PATH . '/config/application.config.php';
+
+if (file_exists(BASE_PATH . '/config/development.config.php')) {
+    $configuration = ArrayUtils::merge($configuration, include BASE_PATH . '/config/development.config.php');
+}
+
+// ensure that before running the application, cache directory must exist
+if (!is_dir($configuration['module_listener_options']['cache_dir'])) {
+    @mkdir($configuration['module_listener_options']['cache_dir'], 0755, true);
+}
+
+// configure and initialize the Zend application
+$app = Application::init($configuration);
+$serviceManager = $app->getServiceManager();
+
+// For now provide a global access to services
+ServicesModelTrait::setServices($serviceManager);
+
+// Get the Symfony Console Application
+$consoleApp = $serviceManager->get('console');
+$consoleApp->run();
