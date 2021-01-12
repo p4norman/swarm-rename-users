@@ -31,9 +31,13 @@ therefore, before a batch rename, please create and save a checkpoint of your se
    `sudo chmod 666 composer.*`    
 6. Extract this modules' files into your $SWARMROOT, overwriting composer.json and composer.lock   
    `sudo tar xvfz renameusermodule.tgz`
-7. Download additional files needed by this module:   
+7. Download additional files needed by this module:  (this may require installing git and generating GitHub personal access token) see  
+   <https://stackoverflow.com/questions/39689437/composer-to-download-private-github-repositories/39702735>.
+   
    `composer install`
-8. Clear the config cache:  
+8. Make the 'console' executable:
+   `sudo chmod +x bin/console'
+9. Clear the config cache:  
    `sudo rm -rf data/cache/*`
    
 ### Trigger Installation
