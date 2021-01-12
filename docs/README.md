@@ -36,7 +36,7 @@ therefore, before a batch rename, please create and save a checkpoint of your se
    
    `composer install`
 8. Make the 'console' executable:
-   `sudo chmod +x bin/console'
+   `sudo chmod +x bin/console`
 9. Clear the config cache:  
    `sudo rm -rf data/cache/*`
    
