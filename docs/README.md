@@ -48,7 +48,7 @@ therefore, before a batch rename, please **create and save a checkpoint of your 
 
 3. You must copy the trigger file to your Perforce server, then (as a Perforce super user) update the trigger table using `"p4 triggers"`  
 by adding this trigger line:  
-   	`swarm.renameuser command post-user-renameuser "%quote%rename-swarm-trigger.pl%quote% -t userrename -v %argc% -x %maxErrorSeverity% -a %quote%%args%%quote%'"`
+   	`swarm.renameuser command post-user-renameuser "%quote%rename-swarm-trigger.pl%quote% -t userrename -v %argc% -x %maxErrorSeverity% -a %quote%%args%%quote%"`
 
 ## Using batch rename
 
@@ -60,7 +60,7 @@ This file must be customized before running the renameuser command.
            'betty' => 'boop',
            'oldname' => 'newname',
        ); 
-2. It is important to run $SWARMROOT/bin/console as the Apache user (usually www-data)'
+2. It is important to run $SWARMROOT/bin/console as the Apache user (usually www-data)
 3. If the swarm system is configured for **multiple 'p4d' instances**, you must pass the "server label" of 
    the server you wish to update as an additional argument to the 'renameuser' command: 
    <https://www.perforce.com/manuals/swarm/Content/Swarm/admin_multiple_p4d_config.html> 
