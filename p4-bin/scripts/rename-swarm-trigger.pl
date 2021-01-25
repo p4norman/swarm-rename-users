@@ -793,8 +793,14 @@ if ($args{type} eq "userrename") {
     my $toname = "";
 
     if ($args{errorSeverity} ne "empty"){ exit 0; }  # the renameuser command failed, so don't fire the trigger
-
-    ($arglist) = ($args{args} =~ /(.*)'$/);  # remove the trailing ' returned by %argsQuoted%
+    
+    # fix the dangling quote sometimes returned with $args{args}
+    $lchar = substr $args{args}, -1;
+    if ($lchar eq "'"){
+        ($arglist) = ($args{args} =~ /(.*)'$/);  # remove the trailing ' returned by %argsQuoted%
+    } else {
+	$arglist = $args{args};
+    }
 
     if ($arglist =~ /--from=(\S*)/){ $fromname = $1; }
 
