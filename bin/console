@@ -1,23 +1,42 @@
 #!/usr/bin/env php
 <?php
 
-# This is a command line script for Helix Swarm 2019.3
+# This is a command line script for Helix Swarm 2020.1
 # it requires the RenameUser extension.
 # Do Not Move this file, it must be run from this location
 # see install and usage documentation in ../module/RenameUser/README.md
 
 use Application\Model\ServicesModelTrait;
 use Symfony\Component\Console\Application as ConsoleApplication;
-use Zend\Mvc\Application;
-use Zend\Stdlib\ArrayUtils;
+use Laminas\Mvc\Application;
+use Laminas\Stdlib\ArrayUtils;
+
 
 if (!defined('BASE_PATH')) {
     define('BASE_PATH', realpath(__DIR__ . '/../'));
     define('BASE_DATA_PATH', realpath( __DIR__ . '/../data/'));
 }
 
+// Check the uid of the person running this script, it should match the owner of the 'data' directory
+$configId = fileowner(BASE_DATA_PATH );
+if (posix_getuid() != $configId){
+    fwrite(STDERR,
+        'You must run this script as user: ' . posix_getpwuid($configId)['name'] . PHP_EOL);
+    exit(1);
+}
+
+$server = null;
+
+// renameuser supports the -s=<server_label> or --server=<server_label> options
+// but these options need to be handled here, before we call configureEnvironment()
+foreach($argv as $arg){
+    if(preg_match('/(-s|--server)=(.*)/',$arg,$matches)){
+        $server = $matches[2];
+    }
+}
+
 require_once BASE_PATH . '/module/Application/SwarmFunctions.php';
-\Application\SwarmFunctions::configureEnvironment( BASE_DATA_PATH );
+\Application\SwarmFunctions::configureEnvironment( BASE_DATA_PATH, $server );
 
 // Composer autoloading
 if (is_file($autoload = BASE_PATH . '/vendor/autoload.php')) {
@@ -40,7 +59,7 @@ if (!is_dir($configuration['module_listener_options']['cache_dir'])) {
     @mkdir($configuration['module_listener_options']['cache_dir'], 0755, true);
 }
 
-// configure and initialize the Zend application
+// configure and initialize the Laminas application
 $app = Application::init($configuration);
 $serviceManager = $app->getServiceManager();
 

@@ -2,14 +2,13 @@
 /**
  * Perforce Swarm, Community Development
  *
- * @copyright   2015 Perforce Software. All rights reserved.
+ * @copyright   2020 Perforce Software. All rights reserved.
  * @license     Please see LICENSE.txt in top-level folder of this distribution.
- * @version     <release>/<patch>
  */
 
 namespace RenameUser;
 
-use Zend\EventManager\Event;
+use Laminas\EventManager\Event;
 
 class Module
 {

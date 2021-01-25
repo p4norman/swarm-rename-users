@@ -1,14 +1,11 @@
 <?php
 namespace RenameUser\Commands;
 
-use Application\Log\SwarmLogger;
 use Interop\Container\ContainerInterface;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Zend\EventManager\Event;
 use RenameUser\RenameUsers;
 
 class RenameUsersCommand extends Command
@@ -27,6 +24,7 @@ class RenameUsersCommand extends Command
     {
         $this->setName('renameusers')
             ->setDescription('Renames Users')
+            ->addOption( 'server', 's', InputOption::VALUE_REQUIRED, "Specify server label for multi p4d swarm")
             ->addOption('log','l',InputOption::VALUE_NONE, "log to rename.log")
             ->addOption( 'confirm', 'y|Y',InputOption::VALUE_NONE, "Must confirm to change data")
             ->setHelp("This command renames the users configured in SWARMROOT/users.php :  [ 'olduser' => 'newname', ... ]");
@@ -51,7 +49,7 @@ class RenameUsersCommand extends Command
 
         $renamer->setLogToFile($logging);
         if ($logging){
-            $output->writeln("Writing rename log to " . BASE_PATH . "/rename.log");
+            $output->writeln("Writing rename log to " . BASE_PATH . "/data/rename.log");
         }
 
         $renamer->setPreview(! $confirm);
@@ -61,6 +59,8 @@ class RenameUsersCommand extends Command
             $output->writeln("Renaming Users: Preview Mode");
         }
 
-        $renamer->rename($changedUsers);
+        if (! $renamer->rename($changedUsers)){
+            $output->writeln("ERROR during rename");
+        }
     }
 }

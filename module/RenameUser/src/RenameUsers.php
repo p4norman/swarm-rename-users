@@ -1,12 +1,11 @@
 <?php
 /**
- * Perforce Swarm 2019.3 Extension for RenameUser
+ * Perforce Swarm 2020.1 Extension for RenameUser
  */
 
 namespace RenameUser;
 
 use Application\Factory\InvokableService;
-use Application\Log\SwarmLogger;
 use Interop\Container\ContainerInterface;
 
 
@@ -96,7 +95,10 @@ class RenameUsers implements InvokableService
     {
         $this->p4admin = $this->services->get('p4_admin');
 
-        $this->logfile = fopen(BASE_PATH . '/rename.log', 'a');
+        $this->logfile = fopen(BASE_PATH . '/data/rename.log', 'a');
+        if (! $this->logfile){
+            return false;
+        }
         if ($this->preview) {
             $this->logLine("\nRename Users: PREVIEW");
         } else {
@@ -124,6 +126,7 @@ class RenameUsers implements InvokableService
             $this->logLine("Rename Users: CHANGES COMPLETE\n");
         }
         fclose($this->logfile);
+        return true;
     }
 
     // print the interesting parts of a review as JSON

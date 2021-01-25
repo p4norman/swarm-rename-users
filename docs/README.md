@@ -1,5 +1,5 @@
 [![Support](https://img.shields.io/badge/Support-Community-yellow.svg)]
-# Swarm RenameUsers module for 2019.3
+# Swarm RenameUsers module for 2020.1
 
 ## Overview:  
 This module extends Helix Swarm to support the renaming of Perforce users in two different ways:
@@ -8,8 +8,8 @@ This module extends Helix Swarm to support the renaming of Perforce users in two
 
 ## Requirements
 
-1. This module will extend Swarm 2019.3, other versions of swarm will probably not work.  
-2. Swarm 2019.3 should already be installed and working.
+1. This module will extend Swarm 2020.1, other versions of swarm will probably not work.  
+2. Swarm 2020.1 should already be installed and working.
 2. This module installation requires that "composer" 1.X be used, newer versions will not work.
 3. The trigger has the same requirements as the existing swarm perl based triggers.
 
@@ -22,7 +22,7 @@ Perforce does not officially support this project, therefore all issues should b
 ## Installation
 
 1. Swarm data is stored in Helix Perforce tables, 
-therefore, before a batch rename, please create and save a checkpoint of your server.
+therefore, before a batch rename, please **create and save a checkpoint of your server**.
 2. Identify your $SWARMROOT, in most installations it is `/opt/perforce/swarm`.
 3. Make sure that you have installed version 1.X of composer. ( not the latest release ) 
    This can be downloaded from the "Manual Download" section of https://getcomposer.org/download
@@ -60,22 +60,29 @@ This file must be customized before running the renameuser command.
            'betty' => 'boop',
            'oldname' => 'newname',
        ); 
-2. Run renameusers in preview mode (the default) and with logging enabled    
+2. It is important to run $SWARMROOT/bin/console as the Apache user (usually www-data)'
+3. If the swarm system is configured for **multiple 'p4d' instances**, you must pass the "server label" of 
+   the server you wish to update as an additional argument to the 'renameuser' command: 
+   <https://www.perforce.com/manuals/swarm/Content/Swarm/admin_multiple_p4d_config.html> 
+   `$SWARMROOT/bin/console renameusers -s=server_label ...`
+4. Run renameusers in preview mode (the default) and with logging enabled    
    `$SWARMROOT/bin/console renameusers -l`
-    This will create the log file `$SWARMROOT/rename.log`
-3. View `rename.log` and  make sure the preview run worked correctly.  
-The preview will issue WARNINGS if a target username is not an existing Perforce user.
-This is to assist administrators in detecting typos in users.php.
- WARNINGS only show up in preview mode, and will not cause the actual renaming to fail.
-4. Once the preview runs as expected, run the command again with the "-Y" command to actually make the changes
+    This will create the log file `$SWARMROOT/data/rename.log`
+5. View `rename.log` and  make sure the preview run worked correctly.  
+   The preview will issue WARNINGS if a target username is not an existing Perforce user.
+   This is to assist administrators in detecting typos in users.php.
+   WARNINGS only show up in preview mode, and will not cause the actual renaming to fail.
+6. Once the preview runs as expected, run the command again with the "-Y" command to actually make the changes
       `$SWARMROOT/bin/console renameusers -l -Y`
       
 ## Debugging
-1. When the trigger fires, it will write a DEBUG (level 7) log entry to the swarm log, 
+1. When the trigger fires, it will cause the handler to write a DEBUG (level 7) log entry to the swarm log, 
    this can only be seen if you set the swarm logging trigger priority to 7 or higher.
-   <https://www.perforce.com/manuals/v19.3/swarm/Content/Swarm/quickstart.logging_level.html>
-   
-2. When using batch rename, run first in preview mode with a log file, this will catch problems early.
+   <https://www.perforce.com/manuals/v20.1/swarm/Content/Swarm/quickstart.logging_level.html>
+
+2. The trigger reports to syslog when it does a user rename. 
+
+3. When using batch rename, run first in preview mode with a log file, this will catch problems early.
 
 
 

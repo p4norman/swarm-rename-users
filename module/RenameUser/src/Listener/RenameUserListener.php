@@ -4,14 +4,13 @@
  *
  * @copyright   2019 Perforce Software. All rights reserved.
  * @license     Please see LICENSE.txt in top-level folder of this distribution.
- * @version     <release>/<patch>
  */
 
 namespace RenameUser\Listener;
 
 use Application\Log\SwarmLogger;
 use Events\Listener\AbstractEventListener;
-use Zend\EventManager\Event;
+use Laminas\EventManager\Event;
 use RenameUser\RenameUsers;
 
 /**
