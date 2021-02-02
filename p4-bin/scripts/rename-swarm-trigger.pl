@@ -791,6 +791,7 @@ if ($args{type} eq "userrename") {
     my $arglist;
     my $fromname = "";
     my $toname = "";
+    my $lchar = "";
 
     if ($args{errorSeverity} ne "empty"){ exit 0; }  # the renameuser command failed, so don't fire the trigger
     
